@@ -33,7 +33,7 @@ defmodule Request do
         {:ok, initial_state}
     end
 
-    def handle_call({:get_state}, from, state) do
+    def handle_call({:get_state}, _from, state) do
         {:reply, state, state}  
     end
 
