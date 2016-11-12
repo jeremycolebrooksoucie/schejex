@@ -2,5 +2,7 @@
              [{registered,[]},
               {description,"schejex"},
               {vsn,"0.1.0"},
-              {modules,['Elixir.Schejex']},
+              {modules,['Elixir.Consumer','Elixir.ConsumerManager',
+                        'Elixir.Request','Elixir.Scheduler','Elixir.Schejex',
+                        'Elixir.User']},
               {applications,[kernel,stdlib,elixir,logger]}]}.
