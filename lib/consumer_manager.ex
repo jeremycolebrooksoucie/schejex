@@ -15,14 +15,17 @@ defmodule ConsumerManager do
     end
 
     @doc """
-    
+    Updates the callers state in ConsumerManager to state
     """
     def update_consumer(state) do
         pid = self()
         GenServer.cast(@consumer_server_name, {:update_consumer, pid, state})
     end
 
-
+    @doc """
+    Returns the internal dict as of call
+    Dict is map from request PID to consumer states
+    """
     def get_all_consumers() do
         GenServer.call(@consumer_server_name, {:get_all_consumers})
     end
