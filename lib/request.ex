@@ -1,6 +1,10 @@
 defmodule Request do
     use GenServer
     
+    ##
+    ## External facing RPC methods
+    ##
+
     @doc """
     Creates a new Request with initial_state and forwards it to
         the registered scheduler process
@@ -11,6 +15,18 @@ defmodule Request do
         #forward pid to registered scheduler 
 
     end
+
+    @doc """
+    Returns the state of the current request at request_pid
+    """
+    def get_state(request_pid) do
+        GenServer.call(request_pid, {:get_state})
+    end
+
+
+    ##
+    ## GenServer Implementation
+    ##
 
     def init(initial_state) do
         # register self
@@ -26,9 +42,6 @@ defmodule Request do
     # end
 
 
-    def get_state(request_pid) do
-        GenServer.call(request_pid, {:get_state})
-    end
 end
 
 
