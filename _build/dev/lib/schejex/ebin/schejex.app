@@ -5,4 +5,5 @@
               {modules,['Elixir.Consumer','Elixir.ConsumerManager',
                         'Elixir.Request','Elixir.Scheduler','Elixir.Schejex',
                         'Elixir.User']},
-              {applications,[kernel,stdlib,elixir,logger]}]}.
+              {applications,[kernel,stdlib,elixir,logger]},
+              {mod,{'Elixir.Schejex',[]}}]}.
