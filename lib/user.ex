@@ -7,7 +7,7 @@ defmodule User do
         min_pid
 	end
 
-    def update_request(request_state, consumer_state, _update_data) do 
+    def update_request(request_state, {consumer_state, _}, _update_data) do 
         consumer_state + request_state
     end
 end
