@@ -17,8 +17,7 @@ defmodule ConsumerManager do
     @doc """
     Updates the callers state in ConsumerManager to state
     """
-    def update_consumer(state) do
-        pid = self()
+    def update_consumer(pid, state) do
         GenServer.cast(@consumer_server_name, {:update_consumer, pid, state})
     end
 
@@ -46,6 +45,7 @@ defmodule ConsumerManager do
 
 
     def handle_cast({:update_consumer, consumer_pid, consumer_state}, state) do
+        IO.inspect(state)
         new_state = Map.put(state, consumer_pid, consumer_state)
         {:noreply, new_state}
     end

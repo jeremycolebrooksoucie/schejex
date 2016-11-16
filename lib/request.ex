@@ -12,10 +12,9 @@ defmodule Request do
     def start(initial_state) do
         {:ok, pid} = GenServer.start(__MODULE__, initial_state)
 
+        #forward pid to registered schedu
         Scheduler.schedule_new_request(pid)
         pid
-        #forward pid to registered scheduler 
-
     end
 
     @doc """
