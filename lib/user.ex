@@ -13,7 +13,7 @@ defmodule User do
 
 
     def interpret_request_update(update, consumer_state, request_state) do
-        IO.puts("user got a request update!")
+        # IO.puts("user got a request update!")
     end
 
 end
