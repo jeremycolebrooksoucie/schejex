@@ -1,7 +1,7 @@
 defmodule TickServer do
     use GenServer
 
-    @rate 0.5
+    @rate 500
 
     @doc """
     Creates a new consumer with some initial_state and waits for a request
