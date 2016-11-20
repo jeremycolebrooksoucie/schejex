@@ -5,8 +5,11 @@ defmodule Schejex do
         Scheduler.start()
         ConsumerManager.start()
 
-        for n <- 1..11, do: Consumer.start(n)
-
+        _consumers = Enum.map(1..11, fn n -> 
+            consumerPid = Consumer.start(n)
+            TickServer.start(fn -> Consumer.give_update(consumerPid, :tick) end)
+            consumerPid end)
+        
         {:ok, self()} # please fix me
     end
 end
