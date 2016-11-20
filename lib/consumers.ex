@@ -33,6 +33,18 @@ defmodule Consumer do
         #update consumer_state_manager
     end
 
+    def handle_cast({:updating_request, update_message}, {dict, [first | _rest]}) do
+        User.interpret_request_update(update_message, dict, first)
+    end
+
+    def give_update(consumerPID, update_message) do
+
+        GenServer.cast(consumerPID, {:updating_request, update_message})
+        :io.fwrite("update given to ~w~n", [consumerPID])
+        # give update to consumer_updater, get call from user (does this first)
+        # build in logic to notify request it is done, pipe that through data stream
+        # 
+    end
 
 
 end
