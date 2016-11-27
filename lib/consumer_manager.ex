@@ -45,8 +45,8 @@ defmodule ConsumerManager do
 
 
     def handle_cast({:update_consumer, consumer_pid, consumer_state}, state) do
-        IO.inspect(state)
         new_state = Map.put(state, consumer_pid, consumer_state)
+        IO.inspect(new_state)
         {:noreply, new_state}
     end
 end
