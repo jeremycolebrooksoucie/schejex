@@ -1,7 +1,7 @@
 defmodule Scheduler do
 	use GenServer
 	@scheduler :new_request_server
-	@user_module User
+	@user_module PrintWordUser
 	##
 	## Client
 	##
@@ -26,7 +26,7 @@ defmodule Scheduler do
 	def handle_cast({:new_request, requestPID}, state) do
 		consumers = ConsumerManager.get_all_consumers()
 		consumerPID = @user_module.assign_consumer(consumers, requestPID)
-		IO.puts("scheduling request")
+		#IO.puts("scheduling request")
 		Consumer.add_request(consumerPID, requestPID)
 		{:noreply, state}
 	end

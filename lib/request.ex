@@ -24,6 +24,12 @@ defmodule Request do
         GenServer.call(request_pid, {:get_state})
     end
 
+    @doc """
+    Returns a list of states for list of request_pids
+    """
+    def get_all_states(request_pids) do
+        Enum.map(request_pids, &get_state/1)
+    end
 
     ##
     ## GenServer Implementation

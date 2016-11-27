@@ -1,6 +1,7 @@
 defmodule Consumer do
     use GenServer
 
+    @user_module PrintWordUser
 
     ##
     ## External facing RPC methods
@@ -52,7 +53,7 @@ defmodule Consumer do
         # {:ok, message} = GenServer.cast(requestPID, user_state)
         # IO.puts("handled cast")
 
-        ConsumerManager.update_consumer(self(), {user_state, request_queue ++ [requestPID]})
+        ConsumerManager.update_consumer(self(), {user_state, Request.get_all_states(request_queue ++ [requestPID])})
 
         {:noreply, {status, user_state, request_queue ++ [requestPID]}}
     end
@@ -65,10 +66,10 @@ defmodule Consumer do
         request_state = Request.get_state(request)
 
         # run code to initiate a request
-        new_user_state = User.start_new_request(user_state, request_state)
+        new_user_state = @user_module.start_new_request(user_state, request_state)
 
         # do a bit of work on that request
-        {response, final_user_state} = User.interpret_request_update(update_message, 
+        {response, final_user_state} = @user_module.interpret_request_update(update_message, 
                                                                      new_user_state, request)
 
         parse_response(response, final_user_state, request_queue) 
@@ -77,14 +78,14 @@ defmodule Consumer do
     def handle_cast({:updating_request, update_message}, 
                     {:working, user_state, request_queue = [request | _rest_requests]}) do
         # do a bit of work on that request
-        {response, final_user_state} = User.interpret_request_update(update_message, 
+        {response, final_user_state} = @user_module.interpret_request_update(update_message, 
                                                                      user_state, request)
 
         parse_response(response, final_user_state, request_queue) 
 
     end
 
-    def handle_cast({:updating_request, update_message}, 
+    def handle_cast({:updating_request, _update_message}, 
                     {status, user_state, []}) do
         {:noreply, {status, user_state, []}}                    
     end
@@ -93,21 +94,24 @@ defmodule Consumer do
     # function to delegate parsing user response messages to
 
     # case for finishing message in queue
-    defp parse_response(:complete,  user_state, [request_head | request_tail]) do 
-        ConsumerManager.update_consumer(self(), {user_state, request_tail})
+    defp parse_response(:complete,  user_state, [_ | request_tail]) do 
+        ConsumerManager.update_consumer(self(), {user_state, Request.get_all_states(request_tail)})
         {:noreply, {:waiting, user_state, request_tail}}
     end
+
     defp parse_response(:continue, user_state, request_queue) do
-        ConsumerManager.update_consumer(self(), {user_state, request_queue})
+        ConsumerManager.update_consumer(self(), {user_state, Request.get_all_states(request_queue)})
         {:noreply, {:working, user_state, request_queue}}
     end
 
 
 
 
+
+
     # def handle_cast({:updating_request, update_message}, 
     #                                   state = {dict, [first | _rest]}) do
-    #     User.interpret_request_update(update_message, dict, first)
+    #     @user_module.interpret_request_update(update_message, dict, first)
     #     {:noreply, state}
     # end
 
