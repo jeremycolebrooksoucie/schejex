@@ -70,16 +70,19 @@ defmodule Consumer do
 
         # do a bit of work on that request
         {response, final_user_state} = @user_module.interpret_request_update(update_message, 
-                                                                     new_user_state, request)
+                                                                     new_user_state, request_state)
 
         parse_response(response, final_user_state, request_queue) 
     end
 
     def handle_cast({:updating_request, update_message}, 
                     {:working, user_state, request_queue = [request | _rest_requests]}) do
+        # get the request state
+        request_state = Request.get_state(request)
+
         # do a bit of work on that request
         {response, final_user_state} = @user_module.interpret_request_update(update_message, 
-                                                                     user_state, request)
+                                                                     user_state, request_state)
 
         parse_response(response, final_user_state, request_queue) 
 
