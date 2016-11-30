@@ -1,7 +1,7 @@
 defmodule Schejex do
     use Application
 
-    @user_module PrintWordUser
+    @user_module TaxiUser
 
     def start(_type, _args) do
         IO.puts("starting")

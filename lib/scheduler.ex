@@ -1,7 +1,7 @@
 defmodule Scheduler do
 	use GenServer
 	@scheduler :new_request_server
-	@user_module PrintWordUser
+    @user_module TaxiUser
 	##
 	## Client
 	##
