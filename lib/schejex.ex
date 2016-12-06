@@ -11,6 +11,6 @@ defmodule Schejex do
         @user_module.start_consumers_and_updaters()
         @user_module.start_requests()
         
-        {:ok, self()} # please fix me
+        {:ok, self()}
     end
 end

@@ -44,9 +44,5 @@ defmodule Request do
         {:reply, state, state}  
     end
 
-    # def handle_cast(request, state) do
-        
-    # end
-
 
 end

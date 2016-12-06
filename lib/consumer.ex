@@ -22,19 +22,13 @@ defmodule Consumer do
 
     #TODO when I get a new request, notify consumer state manager.
     def add_request(consumerPID, requestPID) do
-        # :io.fwrite("Starting new one! ~w~w~n", [consumerPID, requestPID])
         GenServer.call(consumerPID, {:add_request, requestPID})
-        #GenServer.call(consumerPID, requestPID)
-        #call a request
-        #handle it
-        #update consumer_state_manager
     end
 
 
     def give_update(consumerPID, update_message) do
 
         GenServer.cast(consumerPID, {:updating_request, update_message})
-        # :io.fwrite("update given to ~w~n", [consumerPID])
         # give update to consumer_updater, get call from user (does this first)
         # build in logic to notify request it is done, pipe that through data stream
         # 
@@ -51,8 +45,6 @@ defmodule Consumer do
     end
 
     def handle_call({:add_request, requestPID}, _from, {status, user_state, request_queue}) do
-        # {:ok, message} = GenServer.cast(requestPID, user_state)
-        # IO.puts("handled cast")
 
         ConsumerManager.update_consumer(self(), {user_state, Request.get_all_states(request_queue ++ [requestPID])})
 
@@ -80,7 +72,6 @@ defmodule Consumer do
                     {:working, user_state, request_queue = [request | _rest_requests]}) do
         # get the request state
         request_state = Request.get_state(request)
-        # IO.puts("the consumer state is, #{user_state}")
         # do a bit of work on that request
         {response, final_user_state} = @user_module.interpret_request_update(update_message, 
                                                                      user_state, request_state)
@@ -107,19 +98,5 @@ defmodule Consumer do
         ConsumerManager.update_consumer(self(), {user_state, Request.get_all_states(request_queue)})
         {:noreply, {:working, user_state, request_queue}}
     end
-
-
-
-
-
-
-    # def handle_cast({:updating_request, update_message}, 
-    #                                   state = {dict, [first | _rest]}) do
-    #     @user_module.interpret_request_update(update_message, dict, first)
-    #     {:noreply, state}
-    # end
-
-
-
 
 end

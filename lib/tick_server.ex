@@ -14,11 +14,9 @@ defmodule TickServer do
     end
 
     defp loop(action) do
-        #IO.puts("foo")
         receive do
             after @rate -> action.()
                            loop(action)
-            # code
         end
         
     end

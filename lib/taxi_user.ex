@@ -1,5 +1,8 @@
 defmodule TaxiUser do
 
+    @doc """
+    assigns a taxi to a passenger (a consumer to a request_state)
+    """
 	def assign_consumer(consumers, _request_state) do
         {min_pid, _size} = Map.to_list(consumers) 
             |> Enum.min_by( fn({_pid, {_curr_pos, request_states}}) ->
@@ -19,8 +22,10 @@ defmodule TaxiUser do
         # {{start_row, start_col}, {end_row, end_col}, name} : passenger state
 
 
-    # Taxi has arrived at the passenger's destination.
-    # Taxi uses this "time-step" to drop off the passenger.
+    @doc """
+    Taxi has arrived at the passenger's destination.
+    Taxi uses this "time-step" to drop off the passenger.
+    """
     def interpret_request_update(
     		_update, {taxi_row, taxi_col, :occupied, carID},
     	    {{_start_row, _start_col}, {taxi_row, taxi_col}, passenger}) do
@@ -29,8 +34,10 @@ defmodule TaxiUser do
         {:complete, {taxi_row, taxi_col, :empty, carID}}
     end
 
-	# Taxi has arrived at the passenger's pick up point.
-    # Taxi uses this "time-step" to pick up the passenger.
+	@doc """
+    Taxi has arrived at the passenger's pick up point.
+    Taxi uses this "time-step" to pick up the passenger.
+    """
     def interpret_request_update(
     		_update, {taxi_row, taxi_col, :empty, carID}, 
     	    {{taxi_row, taxi_col}, {_end_row, _end_col}, _passenger}) do
@@ -40,8 +47,10 @@ defmodule TaxiUser do
         
     end
 
-	# Taxi is empty and starting on a route to the passenger.
-    # Taxi uses this "time-step" to move closer to the passenger.
+	@doc """
+    Taxi is empty and starting on a route to the passenger.
+    Taxi uses this "time-step" to move closer to the passenger.
+    """
     def interpret_request_update(
     		_update, {taxi_row, taxi_col, :empty, carID}, 
     	    {{start_row, start_col}, {_end_row, _end_col}, _passenger}) do
@@ -53,8 +62,10 @@ defmodule TaxiUser do
         
     end
 
-	# Taxi is in route to a passenger's destination.
-    # Taxi uses this "time-step" to move closer to the passenger's destination.
+	@doc """
+    Taxi is in route to a passenger's destination.
+    Taxi uses this "time-step" to move closer to the passenger's destination.
+    """
     def interpret_request_update(
     		_update, {taxi_row, taxi_col, :occupied, carID}, 
     	    {{_start_row, _start_col}, {end_row, end_col}, passenger}) do
@@ -65,8 +76,10 @@ defmodule TaxiUser do
         {:continue, {new_row, new_col, :occupied, carID}}
     end
 
-    # Returns the next position between 
-    # (curr_row, curr_col) and (dest_row, dest_col)
+    @doc """
+    Returns the next position between
+    (curr_row, curr_col) and (dest_row, dest_col)
+    """
     def get_next_position(curr_row, curr_col, dest_row, dest_col) do
     	new_row = cond do
     		curr_row > dest_row -> curr_row - 1
@@ -81,7 +94,11 @@ defmodule TaxiUser do
     	{new_row, new_col}
  	end
 
-    # Returns new consumer state corresponding to next_request_state
+
+
+    @doc """
+    Returns new consumer state corresponding to next_request_state
+    """
     def start_new_request(consumer_state, _next_request_state) do
         consumer_state
     end
@@ -109,9 +126,6 @@ defmodule TaxiUser do
         Request.start({{5, 2}, {10, 6}, :riya})
         Request.start({{6, 0}, {12, 1}, :ben})
         
-        # Enum.each(1..10, fn _ ->
-        #     Request.start("rew rfew few fedc ew tlekwjr elfj ds")
-        # end)
     end
 
 end
