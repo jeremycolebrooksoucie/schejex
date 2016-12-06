@@ -5,12 +5,7 @@ run using the following build command:
 
 iex -S mix
 
-This will model a series of taxi's picking up and dropping off clients. The taxi seemed to be a natural starting point, but our solution is designed to be generic and can be extended by filling out skeleton.ex.
-
-Initialization process:
-Requests first
-Consumers next
-Consumers initialize scheduler
+This will model a series of taxi's picking up and dropping off clients. The taxi seemed to be a natural starting point, but our solution is designed to be generic and can be extended by filling out template.ex.
 
 Consumers: each consumer is a dictionary, thus all of the consumers is a nested dictionary (dictionary of dictionaries)
 A scheduler is 2 processes, one receives request by message, the other is the state management loop
