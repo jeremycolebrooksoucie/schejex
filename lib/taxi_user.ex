@@ -4,15 +4,29 @@ defmodule TaxiUser do
     @doc """
     assigns a taxi to a passenger (a consumer to a request_state)
     """
-	def assign_consumer(consumers, {startpos = {row, col}, endpos, {ref, requester}}) do
+	def assign_consumer(consumers, {{start_row, start_col}, {end_row, end_col} , {ref, requester}}) do
         let = String.first(Atom.to_string(requester)) |> String.downcase()
         
-        Print.get_update(ref, row, col, let)
+        Print.get_update(ref, start_row, start_col, let)
 
+        # gets total distance from taxi pos, through request_states, to end_row, end_col 
+        distance = fn({taxi_row, taxi_col}, request_states) ->
+            points = Enum.map(request_states, fn {pos1, pos2, _passenger} -> [pos1, pos2] end)
+                |> List.flatten()
 
-        {min_pid, _size} = Map.to_list(consumers) 
-            |> Enum.min_by( fn({_pid, {_curr_pos, request_states}}) ->
-                    length(request_states) end)
+            points = [{taxi_row, taxi_col} | points]
+            [h | rest] = points
+            List.zip([points, rest])
+                |> Enum.map(fn({{r1, c1}, {r2, c2}}) -> 
+                        :math.sqrt(:math.pow(r1 - r2, 2) + :math.pow(c1 - c2, 2)) 
+                   end)
+                |> Enum.reduce(0, &(&1+&2))
+        end
+
+        {min_pid, _state} = Map.to_list(consumers) 
+            |> Enum.min_by( fn({_pid, {{r, c, _status, _id}, request_states}}) ->
+                    #length(request_states) 
+                    distance.({r, c}, request_states) end)
         min_pid
     end
 

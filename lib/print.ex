@@ -13,10 +13,7 @@ defmodule Print do
             |> Enum.reduce(%{}, fn({k, {r, c, disp}}, acc) -> Map.put(acc, {r, c}, disp) end)
 
             
-
-
-
-        IO.puts("consumers")
+        #IO.puts("consumers")
         IO.puts("----------------------------")
         lines = Enum.map(0..@num_rows, &(print_col(&1, positions)))
         IO.puts(Enum.join(lines, "\n"))
