@@ -1,8 +1,8 @@
 defmodule Skeleton do
     
     @doc """
-    skeleton designed for users to design and implement applications that reqiure
-    concurrent scheduling.
+    skeleton designed for users to design and implement applications that 
+    reqiure concurrent scheduling.
     """
 
     @doc """

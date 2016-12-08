@@ -30,7 +30,8 @@ defmodule TaxiUser do
     		_update, {taxi_row, taxi_col, :occupied, carID},
     	    {{_start_row, _start_col}, {taxi_row, taxi_col}, passenger}) do
 
-        IO.puts("car ##{carID} at (#{taxi_row}, #{taxi_col}) with #{passenger}")
+        Print.get_update(carID, taxi_row, taxi_col)
+        # IO.puts("car ##{carID} at (#{taxi_row}, #{taxi_col}) with #{passenger}")
         {:complete, {taxi_row, taxi_col, :empty, carID}}
     end
 
@@ -42,7 +43,8 @@ defmodule TaxiUser do
     		_update, {taxi_row, taxi_col, :empty, carID}, 
     	    {{taxi_row, taxi_col}, {_end_row, _end_col}, _passenger}) do
 
-        IO.puts("car ##{carID} at (#{taxi_row}, #{taxi_col}) empty")
+        Print.get_update(carID, taxi_row, taxi_col)
+        # IO.puts("car ##{carID} at (#{taxi_row}, #{taxi_col}) empty")
         {:continue, {taxi_row, taxi_col, :occupied, carID}}
         
     end
@@ -55,11 +57,11 @@ defmodule TaxiUser do
     		_update, {taxi_row, taxi_col, :empty, carID}, 
     	    {{start_row, start_col}, {_end_row, _end_col}, _passenger}) do
 
-        IO.puts("car ##{carID} at (#{taxi_row}, #{taxi_col}) empty")
+        Print.get_update(carID, taxi_row, taxi_col)
+        # IO.puts("car ##{carID} at (#{taxi_row}, #{taxi_col}) empty")
         {new_row, new_col} = get_next_position(taxi_row, taxi_col, 
         									   start_row, start_col)
-        {:continue, {new_row, new_col, :empty, carID}}
-        
+        {:continue, {new_row, new_col, :empty, carID}}        
     end
 
 	@doc """
@@ -70,7 +72,8 @@ defmodule TaxiUser do
     		_update, {taxi_row, taxi_col, :occupied, carID}, 
     	    {{_start_row, _start_col}, {end_row, end_col}, passenger}) do
     	
-        IO.puts("car ##{carID} at (#{taxi_row}, #{taxi_col}) with #{passenger}")
+        Print.get_update(carID, taxi_row, taxi_col)
+        # IO.puts("car ##{carID} at (#{taxi_row}, #{taxi_col}) with #{passenger}")
         {new_row, new_col} = get_next_position(taxi_row, taxi_col, 
         									   end_row, end_col)
         {:continue, {new_row, new_col, :occupied, carID}}
@@ -120,9 +123,9 @@ defmodule TaxiUser do
     end
 
     def start_requests() do
-        Request.start({{10, 5}, {5, -1}, :sally})
+        Request.start({{10, 5}, {5, 1}, :sally})
         Request.start({{1, 0}, {5, 2}, :craig})
-        Request.start({{7, -2}, {20, -2}, :sharon})
+        Request.start({{7, 2}, {20, 2}, :sharon})
         Request.start({{5, 2}, {10, 6}, :riya})
         Request.start({{6, 0}, {12, 1}, :ben})
         

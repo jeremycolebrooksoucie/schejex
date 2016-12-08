@@ -14,7 +14,6 @@ defmodule Consumer do
 
     def start(initial_state) do
         {:ok, pid} = GenServer.start(__MODULE__, {:waiting, initial_state, []})
-        # IO.puts("the consumer state is, #{initial_state}")
         ConsumerManager.update_consumer(pid, {initial_state, []})
         pid
     end
@@ -27,11 +26,9 @@ defmodule Consumer do
 
 
     def give_update(consumerPID, update_message) do
-
         GenServer.cast(consumerPID, {:updating_request, update_message})
-        # give update to consumer_updater, get call from user (does this first)
-        # build in logic to notify request it is done, pipe that through data stream
-        # 
+        # give update to consumer_updater, get call from user
+        # notifies request when done, pipe through data stream
     end
 
 
@@ -44,9 +41,11 @@ defmodule Consumer do
         {:ok, initial_state}
     end
 
-    def handle_call({:add_request, requestPID}, _from, {status, user_state, request_queue}) do
+    def handle_call({:add_request, requestPID}, _from, {status, user_state, 
+                                                          request_queue}) do
 
-        ConsumerManager.update_consumer(self(), {user_state, Request.get_all_states(request_queue ++ [requestPID])})
+        ConsumerManager.update_consumer(self(), {user_state, 
+                    Request.get_all_states(request_queue ++ [requestPID])})
 
         {:reply, :ok, {status, user_state, request_queue ++ [requestPID]}}
     end
@@ -54,7 +53,8 @@ defmodule Consumer do
     # update request when waiting for a new request
     # start a new request and do a unit of work on it
     def handle_cast({:updating_request, update_message}, 
-                    {:waiting, user_state, request_queue = [request | _rest_requests]}) do
+                    {:waiting, user_state, request_queue = 
+                                              [request | _rest_requests]}) do
         # get the request state
         request_state = Request.get_state(request)
 
@@ -62,19 +62,22 @@ defmodule Consumer do
         new_user_state = @user_module.start_new_request(user_state, request_state)
 
         # do a bit of work on that request
-        {response, final_user_state} = @user_module.interpret_request_update(update_message, 
-                                                                     new_user_state, request_state)
+        {response, final_user_state} = 
+                        @user_module.interpret_request_update(update_message, 
+                                                new_user_state, request_state)
 
         parse_response(response, final_user_state, request_queue) 
     end
 
     def handle_cast({:updating_request, update_message}, 
-                    {:working, user_state, request_queue = [request | _rest_requests]}) do
+                    {:working, user_state, request_queue = 
+                                                [request | _rest_requests]}) do
         # get the request state
         request_state = Request.get_state(request)
         # do a bit of work on that request
-        {response, final_user_state} = @user_module.interpret_request_update(update_message, 
-                                                                     user_state, request_state)
+        {response, final_user_state} = 
+                        @user_module.interpret_request_update(update_message, 
+                                                    user_state, request_state)
 
         parse_response(response, final_user_state, request_queue) 
 
@@ -90,12 +93,14 @@ defmodule Consumer do
 
     # case for finishing message in queue
     defp parse_response(:complete,  user_state, [_ | request_tail]) do 
-        ConsumerManager.update_consumer(self(), {user_state, Request.get_all_states(request_tail)})
+        ConsumerManager.update_consumer(self(), {user_state, 
+                                Request.get_all_states(request_tail)})
         {:noreply, {:waiting, user_state, request_tail}}
     end
 
     defp parse_response(:continue, user_state, request_queue) do
-        ConsumerManager.update_consumer(self(), {user_state, Request.get_all_states(request_queue)})
+        ConsumerManager.update_consumer(self(), {user_state, 
+                                Request.get_all_states(request_queue)})
         {:noreply, {:working, user_state, request_queue}}
     end
 

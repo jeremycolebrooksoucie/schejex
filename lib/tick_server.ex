@@ -5,7 +5,8 @@ defmodule TickServer do
 
     @doc """
     Creates a new consumer with some initial_state and waits for a request
-        from the scheduler.
+        from the scheduler. Programmed to update at a rate of @rate 
+        (initialized to half a second)
     """
 
     def start(action) do
