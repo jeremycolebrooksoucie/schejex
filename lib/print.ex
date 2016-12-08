@@ -3,36 +3,33 @@ defmodule Print do
     @num_cols 25
     @printer_name :printer
 
-    #TODO add border, print out at once, verify print space, figure out why it's print twice
 
-    #prints taxis on a grid (assumes everything contained in 25x25 space)
+    @doc """
+    prints taxis on a grid (assumes everything contained in 25x25 space)
+    """
     def print_rows(positions) do
         IO.puts("consumers")
-        IO.puts("-------------------------")
+        IO.puts("----------------------------")
         for row <- 0..@num_rows, do: print_col(row, positions)
-        IO.puts("-------------------------")
+        IO.puts("----------------------------")
     end
 
-    #prints each column, ending with a newline
+    @doc """
+    prints each column, ending with a newline character
+    """
     def print_col(row, positions) do
-        IO.write("|")
         for col <- 0..@num_cols, do: print_space(row, col, positions)
-        IO.write("|\n")
+        IO.write("\n")
     end
 
-    #prints an individual space
+    @doc """
+    prints an individual space 
+    """
     def print_space(row, col, positions) do
-        for {_key, {r, c}} <- positions, do: check_space(r, c, row, col)
-    end
-
-    #this is broken, will write a space for every key
-    #determines if a taxi is at a given position or not
-    def check_space(r, c, row, col) do
-         if row == r and c == col do
-                IO.write("#")
-            else 
-                IO.write(" ")
-            end
+        for {_key, {r, c}} <- positions, do: [
+                (if (row == r and c == col), do: IO.write("#"))
+            ]
+        IO.write(" ")
     end
 
     @doc """

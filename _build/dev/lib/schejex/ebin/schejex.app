@@ -1,0 +1,11 @@
+{application,schejex,
+             [{registered,[]},
+              {description,"schejex"},
+              {vsn,"0.1.0"},
+              {modules,['Elixir.Consumer','Elixir.ConsumerManager',
+                        'Elixir.CountdownUser','Elixir.Print',
+                        'Elixir.PrintWordUser','Elixir.Request',
+                        'Elixir.Scheduler','Elixir.Schejex','Elixir.Skeleton',
+                        'Elixir.TaxiUser','Elixir.TickServer']},
+              {applications,[kernel,stdlib,elixir,logger]},
+              {mod,{'Elixir.Schejex',[]}}]}.

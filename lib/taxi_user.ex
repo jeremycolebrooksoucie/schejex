@@ -31,7 +31,6 @@ defmodule TaxiUser do
     	    {{_start_row, _start_col}, {taxi_row, taxi_col}, passenger}) do
 
         Print.get_update(carID, taxi_row, taxi_col)
-        # IO.puts("car ##{carID} at (#{taxi_row}, #{taxi_col}) with #{passenger}")
         {:complete, {taxi_row, taxi_col, :empty, carID}}
     end
 
@@ -44,7 +43,6 @@ defmodule TaxiUser do
     	    {{taxi_row, taxi_col}, {_end_row, _end_col}, _passenger}) do
 
         Print.get_update(carID, taxi_row, taxi_col)
-        # IO.puts("car ##{carID} at (#{taxi_row}, #{taxi_col}) empty")
         {:continue, {taxi_row, taxi_col, :occupied, carID}}
         
     end
@@ -58,7 +56,6 @@ defmodule TaxiUser do
     	    {{start_row, start_col}, {_end_row, _end_col}, _passenger}) do
 
         Print.get_update(carID, taxi_row, taxi_col)
-        # IO.puts("car ##{carID} at (#{taxi_row}, #{taxi_col}) empty")
         {new_row, new_col} = get_next_position(taxi_row, taxi_col, 
         									   start_row, start_col)
         {:continue, {new_row, new_col, :empty, carID}}        
@@ -73,7 +70,6 @@ defmodule TaxiUser do
     	    {{_start_row, _start_col}, {end_row, end_col}, passenger}) do
     	
         Print.get_update(carID, taxi_row, taxi_col)
-        # IO.puts("car ##{carID} at (#{taxi_row}, #{taxi_col}) with #{passenger}")
         {new_row, new_col} = get_next_position(taxi_row, taxi_col, 
         									   end_row, end_col)
         {:continue, {new_row, new_col, :occupied, carID}}
