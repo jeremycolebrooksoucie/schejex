@@ -14,7 +14,7 @@ defmodule TaxiUser do
             points = Enum.map(request_states, fn {pos1, pos2, _passenger} -> [pos1, pos2] end)
                 |> List.flatten()
 
-            points = [{taxi_row, taxi_col} | points]
+            points = [{taxi_row, taxi_col} | points] ++ [{start_row, start_col}]
             [h | rest] = points
             List.zip([points, rest])
                 |> Enum.map(fn({{r1, c1}, {r2, c2}}) -> 
