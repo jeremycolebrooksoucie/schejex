@@ -1,9 +1,15 @@
 defmodule TaxiUser do
+    @empty_taxi :@
 
     @doc """
     assigns a taxi to a passenger (a consumer to a request_state)
     """
-	def assign_consumer(consumers, _request_state) do
+	def assign_consumer(consumers, {startpos = {row, col}, endpos, {ref, requester}}) do
+        let = String.first(Atom.to_string(requester)) |> String.downcase()
+        
+        Print.get_update(ref, row, col, let)
+
+
         {min_pid, _size} = Map.to_list(consumers) 
             |> Enum.min_by( fn({_pid, {_curr_pos, request_states}}) ->
                     length(request_states) end)
@@ -28,9 +34,12 @@ defmodule TaxiUser do
     """
     def interpret_request_update(
     		_update, {taxi_row, taxi_col, :occupied, carID},
-    	    {{_start_row, _start_col}, {taxi_row, taxi_col}, passenger}) do
+    	    {{_start_row, _start_col}, {taxi_row, taxi_col}, {ref, requester}}) do
 
-        Print.get_update(carID, taxi_row, taxi_col)
+        #let = String.first(Atom.to_string(requester)) |> String.()
+
+        #Print.get_update(ref, taxi_row, taxi_col, "*")
+        Print.get_update(carID, taxi_row, taxi_col, @empty_taxi)
         {:complete, {taxi_row, taxi_col, :empty, carID}}
     end
 
@@ -40,9 +49,13 @@ defmodule TaxiUser do
     """
     def interpret_request_update(
     		_update, {taxi_row, taxi_col, :empty, carID}, 
-    	    {{taxi_row, taxi_col}, {_end_row, _end_col}, _passenger}) do
+    	    {{taxi_row, taxi_col}, {_end_row, _end_col}, {ref, requester}}) do
+        
+        Print.remove_entry(ref)
 
-        Print.get_update(carID, taxi_row, taxi_col)
+        let = String.first(Atom.to_string(requester)) |> String.upcase()
+        #Print.get_update(ref, taxi_row, taxi_col, let)
+        Print.get_update(carID, taxi_row, taxi_col, let)
         {:continue, {taxi_row, taxi_col, :occupied, carID}}
         
     end
@@ -55,7 +68,7 @@ defmodule TaxiUser do
     		_update, {taxi_row, taxi_col, :empty, carID}, 
     	    {{start_row, start_col}, {_end_row, _end_col}, _passenger}) do
 
-        Print.get_update(carID, taxi_row, taxi_col)
+        Print.get_update(carID, taxi_row, taxi_col, @empty_taxi)
         {new_row, new_col} = get_next_position(taxi_row, taxi_col, 
         									   start_row, start_col)
         {:continue, {new_row, new_col, :empty, carID}}        
@@ -67,9 +80,12 @@ defmodule TaxiUser do
     """
     def interpret_request_update(
     		_update, {taxi_row, taxi_col, :occupied, carID}, 
-    	    {{_start_row, _start_col}, {end_row, end_col}, passenger}) do
-    	
-        Print.get_update(carID, taxi_row, taxi_col)
+    	    {{_start_row, _start_col}, {end_row, end_col}, {ref, requester}}) do
+        
+        let = String.first(Atom.to_string(requester)) |> String.upcase()
+        #Print.get_update(ref, taxi_row, taxi_col, let)
+
+        Print.get_update(carID, taxi_row, taxi_col, let)
         {new_row, new_col} = get_next_position(taxi_row, taxi_col, 
         									   end_row, end_col)
         {:continue, {new_row, new_col, :occupied, carID}}
@@ -119,11 +135,11 @@ defmodule TaxiUser do
     end
 
     def start_requests() do
-        Request.start({{10, 5}, {5, 1}, :sally})
-        Request.start({{1, 0}, {5, 2}, :craig})
-        Request.start({{7, 2}, {8, 2}, :sharon})
-        Request.start({{5, 2}, {10, 6}, :riya})
-        Request.start({{6, 0}, {12, 1}, :ben})
+        Request.start({{10, 5}, {5, 1}, {make_ref, :sally}})
+        Request.start({{1, 0}, {15, 2}, {make_ref, :craig}})
+        Request.start({{17, 2}, {8, 2}, {make_ref, :sharon}})
+        Request.start({{15, 2}, {10, 6}, {make_ref, :riya}})
+        Request.start({{6, 0}, {12, 1}, {make_ref, :ben}})
 
         Print.start()
         

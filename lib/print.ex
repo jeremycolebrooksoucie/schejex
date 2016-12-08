@@ -10,7 +10,7 @@ defmodule Print do
     def print_rows(positions) do
         # reverses positions to key by value
         positions = Map.to_list(positions) 
-            |> Enum.reduce(%{}, fn({k, v}, acc) -> Map.put(acc, v, "#") end)
+            |> Enum.reduce(%{}, fn({k, {r, c, disp}}, acc) -> Map.put(acc, {r, c}, disp) end)
 
             
 
@@ -48,9 +48,14 @@ defmodule Print do
     @doc """
     called at the end of interpret_request_update. 
     Updates the position of a taxi on our grid after it moves
+    Disp is string to be display. Must be a string. 
     """
-    def get_update(consumerPID, row, col) do
-        GenServer.cast(@printer_name, {:get_update, consumerPID, row, col})
+    def get_update(consumerPID, row, col, disp) do
+        GenServer.cast(@printer_name, {:get_update, consumerPID, row, col, disp})
+    end
+
+    def remove_entry(entryRef) do 
+        GenServer.cast(@printer_name, {:remove, entryRef})
     end
 
     @doc """
@@ -74,9 +79,15 @@ defmodule Print do
     @doc """
     casts the position updates, starts printing the grid
     """
-    def handle_cast({:get_update, consumerPID, row, col}, positions) do
-        positions = Map.update(positions, consumerPID, {row, col},
-                                    fn _ -> {row, col} end)
+    def handle_cast({:get_update, consumerPID, row, col, disp}, positions) do
+        positions = Map.update(positions, consumerPID, {row, col, disp},
+                                    fn _ -> {row, col, disp} end)
+        {:noreply, positions}  
+    end
+
+
+    def handle_cast({:remove, ref}, positions) do
+        positions = Map.delete(positions, ref)
         {:noreply, positions}  
     end
 
