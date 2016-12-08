@@ -1,5 +1,5 @@
 defmodule PrintWordUser do
-    def assign_consumer(consumers, request_state) do
+    def assign_consumer(consumers, _request_state) do
         {min_pid, _size} = Map.to_list(consumers) 
             |> Enum.min_by( fn({_pid, {_printing_word, request_states}}) ->   
                     Enum.map(request_states, &String.length/1)
@@ -33,7 +33,7 @@ defmodule PrintWordUser do
     end
 
     # returns new consumer state corresponding to next_request_state
-    def start_new_request(old_list, next_request_state) do
+    def start_new_request(_old_list, next_request_state) do
         #IO.puts("user starting new request")
         #IO.inspect(next_request_state)
         String.split(next_request_state, " ")
@@ -47,7 +47,7 @@ defmodule PrintWordUser do
     ####################################################################
 
     def start_consumers_and_updaters() do
-        consumers = Enum.map(1..11, fn n -> 
+        consumers = Enum.map(1..11, fn _n -> 
             consumerPid = Consumer.start([])
             TickServer.start(fn -> Consumer.give_update(consumerPid, :tick) end)
             consumerPid end)

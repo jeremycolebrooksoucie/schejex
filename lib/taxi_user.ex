@@ -121,9 +121,11 @@ defmodule TaxiUser do
     def start_requests() do
         Request.start({{10, 5}, {5, 1}, :sally})
         Request.start({{1, 0}, {5, 2}, :craig})
-        Request.start({{7, 2}, {20, 2}, :sharon})
+        Request.start({{7, 2}, {8, 2}, :sharon})
         Request.start({{5, 2}, {10, 6}, :riya})
         Request.start({{6, 0}, {12, 1}, :ben})
+
+        Print.start()
         
     end
 

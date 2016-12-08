@@ -1,5 +1,5 @@
 defmodule CountdownUser do
-	def assign_consumer(consumers, request_pid) do
+	def assign_consumer(consumers, _request_pid) do
         {min_pid, _size} = Map.to_list(consumers) 
             |> Enum.min_by(fn({_pid, {{num, []}, _request_queue}}) -> -1 * num end)
 		#IO.puts("Assigning consumer")
