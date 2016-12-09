@@ -3,6 +3,9 @@ defmodule Schejex do
 
     @user_module TaxiUser
 
+    @doc """
+    startup code for the entire schejex project
+    """
     def start(_type, _args) do
         IO.puts("starting modules")
         Scheduler.start()

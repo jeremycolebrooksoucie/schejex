@@ -44,6 +44,9 @@ defmodule Print do
         GenServer.cast(@printer_name, {:get_update, consumerPID, row, col, disp})
     end
 
+    @doc """
+    removes an entry from the positions
+    """
     def remove_entry(entryRef) do 
         GenServer.cast(@printer_name, {:remove, entryRef})
     end
@@ -71,24 +74,31 @@ defmodule Print do
     """
     def handle_cast({:get_update, consumerPID, row, col, disp}, positions) do
         positions = Map.update(positions, consumerPID, {row, col, disp},
-                                    fn _ -> {row, col, disp} end)
+                                           fn _ -> {row, col, disp} end)
         {:noreply, positions}  
     end
 
-
+    @doc """
+    removes a position from the grid
+    """
     def handle_cast({:remove, ref}, positions) do
         positions = Map.delete(positions, ref)
         {:noreply, positions}  
     end
 
+    @doc """
+    prints positions
+    """
     def handle_cast(:print, positions) do
         print_rows(positions)
         {:noreply, positions}  
     end
 
-     def init(initial_state) do
+    @doc """
+    initializes grid
+    """
+    def init(initial_state) do
         # register self
         {:ok, initial_state}
     end
-
 end
