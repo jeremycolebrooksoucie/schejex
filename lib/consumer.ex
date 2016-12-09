@@ -12,9 +12,6 @@ defmodule Consumer do
         from the scheduler.
     """
 
-    @doc """
-    starts up consumers
-    """
     def start(initial_state) do
         {:ok, pid} = GenServer.start(__MODULE__, {:waiting, initial_state, []})
         ConsumerManager.update_consumer(pid, {initial_state, []})
@@ -103,18 +100,14 @@ defmodule Consumer do
         {:noreply, {status, user_state, []}}                    
     end
 
-    @doc """
-    case for finishing message in queue
-    """
+    # case for finishing message in queue
     defp parse_response(:complete,  user_state, [_ | request_tail]) do 
         ConsumerManager.update_consumer(self(), {user_state, 
                                 Request.get_all_states(request_tail)})
         {:noreply, {:waiting, user_state, request_tail}}
     end
 
-    @doc """
-    function to delegate parsing user response messages
-    """
+    # function to delegate parsing user response messages
     defp parse_response(:continue, user_state, request_queue) do
         ConsumerManager.update_consumer(self(), {user_state, 
                                 Request.get_all_states(request_queue)})

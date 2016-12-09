@@ -9,17 +9,11 @@ defmodule TickServer do
         (initialized to half a second)
     """
 
-    @doc """
-    spawns an action passed in
-    """
     def start(action) do
-        pid = spawn(fn -> loop(action) end)
+        _pid = spawn(fn -> loop(action) end)
         
     end
 
-    @doc """
-    loops at rate @rate
-    """
     defp loop(action) do
         receive do
             after @rate -> action.()
