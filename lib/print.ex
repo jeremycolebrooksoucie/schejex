@@ -5,20 +5,19 @@ defmodule Print do
 
 
     @doc """
-    prints taxis on a grid (assumes everything contained in 25x25 space)
+    prints taxis on a grid (assumes everything contained in 15x15 space)
     """
     def print_rows(positions) do
+        IO.puts("\n")
         # reverses positions to key by value
         positions = Map.to_list(positions) 
-            |> Enum.reduce(%{}, fn({k, {r, c, disp}}, acc) -> Map.put(acc, {r, c}, disp) end)
-
-            
-        #IO.puts("consumers")
-        IO.puts("----------------------------")
+            |> Enum.reduce(%{}, fn({_k, {r, c, disp}}, acc) -> 
+                                Map.put(acc, {r, c}, disp) end)
+        IO.puts("----------------")
+        #gets each line of the grid
         lines = Enum.map(0..@num_rows, &(print_col(&1, positions)))
         IO.puts(Enum.join(lines, "\n"))
-        #for row <- 0..@num_rows, do: print_col(row, positions)
-        IO.puts("----------------------------")
+        IO.puts("----------------")
     end
 
     @doc """
@@ -27,8 +26,6 @@ defmodule Print do
     def print_col(row, positions) do
         Enum.map(0..@num_cols, &(print_space(row, &1, positions))) 
             |> Enum.join("")
-        #for col <- 0..@num_cols, do: print_space(row, col, positions)
-        #IO.write("\n")
     end
 
     @doc """
@@ -36,10 +33,6 @@ defmodule Print do
     """
     def print_space(row, col, positions) do
         Map.get(positions, {row, col}," ")        
-        # IO.write(" ")
-        # for {_key, {r, c}} <- positions, do: [
-        #         (if (row == r and c == col), do: IO.write("#"))
-        #     ]
     end
 
     @doc """

@@ -4,18 +4,20 @@ defmodule TaxiUser do
     @doc """
     assigns a taxi to a passenger (a consumer to a request_state)
     """
-	def assign_consumer(consumers, {{start_row, start_col}, {end_row, end_col} , {ref, requester}}) do
+	def assign_consumer(consumers, {{start_row, start_col}, {_end_row, _end_col}, 
+                                                            {ref, requester}}) do
         let = String.first(Atom.to_string(requester)) |> String.downcase()
         
         Print.get_update(ref, start_row, start_col, let)
 
-        # gets total distance from taxi pos, through request_states, to end_row, end_col 
+        # gets total distance from taxi pos, via request_states, to end_row, end_col 
         distance = fn({taxi_row, taxi_col}, request_states) ->
-            points = Enum.map(request_states, fn {pos1, pos2, _passenger} -> [pos1, pos2] end)
+            points = Enum.map(request_states, fn {pos1, pos2, _passenger} -> 
+                                                            [pos1, pos2] end)
                 |> List.flatten()
 
             points = [{taxi_row, taxi_col} | points] ++ [{start_row, start_col}]
-            [h | rest] = points
+            [_h | rest] = points
             List.zip([points, rest])
                 |> Enum.map(fn({{r1, c1}, {r2, c2}}) -> 
                         :math.sqrt(:math.pow(r1 - r2, 2) + :math.pow(c1 - c2, 2)) 
@@ -48,11 +50,7 @@ defmodule TaxiUser do
     """
     def interpret_request_update(
     		_update, {taxi_row, taxi_col, :occupied, carID},
-    	    {{_start_row, _start_col}, {taxi_row, taxi_col}, {ref, requester}}) do
-
-        #let = String.first(Atom.to_string(requester)) |> String.()
-
-        #Print.get_update(ref, taxi_row, taxi_col, "*")
+    	    {{_start_row, _start_col}, {taxi_row, taxi_col}, {_ref, _requester}}) do
         Print.get_update(carID, taxi_row, taxi_col, @empty_taxi)
         {:complete, {taxi_row, taxi_col, :empty, carID}}
     end
@@ -63,12 +61,9 @@ defmodule TaxiUser do
     """
     def interpret_request_update(
     		_update, {taxi_row, taxi_col, :empty, carID}, 
-    	    {{taxi_row, taxi_col}, {_end_row, _end_col}, {ref, requester}}) do
-        
+    	    {{taxi_row, taxi_col}, {_end_row, _end_col}, {ref, requester}}) do        
         Print.remove_entry(ref)
-
         let = String.first(Atom.to_string(requester)) |> String.upcase()
-        #Print.get_update(ref, taxi_row, taxi_col, let)
         Print.get_update(carID, taxi_row, taxi_col, let)
         {:continue, {taxi_row, taxi_col, :occupied, carID}}
         
@@ -94,11 +89,9 @@ defmodule TaxiUser do
     """
     def interpret_request_update(
     		_update, {taxi_row, taxi_col, :occupied, carID}, 
-    	    {{_start_row, _start_col}, {end_row, end_col}, {ref, requester}}) do
+    	    {{_start_row, _start_col}, {end_row, end_col}, {_ref, requester}}) do
         
         let = String.first(Atom.to_string(requester)) |> String.upcase()
-        #Print.get_update(ref, taxi_row, taxi_col, let)
-
         Print.get_update(carID, taxi_row, taxi_col, let)
         {new_row, new_col} = get_next_position(taxi_row, taxi_col, 
         									   end_row, end_col)

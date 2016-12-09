@@ -4,7 +4,7 @@ defmodule Schejex do
     @user_module TaxiUser
 
     def start(_type, _args) do
-        IO.puts("starting")
+        IO.puts("starting modules")
         Scheduler.start()
         ConsumerManager.start()
 
