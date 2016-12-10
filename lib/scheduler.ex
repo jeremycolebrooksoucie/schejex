@@ -25,7 +25,8 @@ defmodule Scheduler do
 
 	def handle_cast({:new_request, requestPID}, state) do
 		consumers = ConsumerManager.get_all_consumers()
-		consumerPID = @user_module.assign_consumer(consumers, Request.get_state(requestPID))
+		consumerPID = @user_module.assign_consumer(consumers, 
+                            Request.get_state(requestPID))
 		#IO.puts("scheduling request")
 		Consumer.add_request(consumerPID, requestPID)
 		{:noreply, state}

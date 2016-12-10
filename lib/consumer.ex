@@ -59,7 +59,8 @@ defmodule Consumer do
         request_state = Request.get_state(request)
 
         # run code to initiate a request
-        new_user_state = @user_module.start_new_request(user_state, request_state)
+        new_user_state = @user_module.start_new_request(user_state, 
+                                                        request_state)
 
         # do a bit of work on that request
         {response, final_user_state} = 
