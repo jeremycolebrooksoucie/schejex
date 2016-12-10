@@ -10,7 +10,7 @@ defmodule TickServer do
     """
 
     def start(action) do
-        pid = spawn(fn -> loop(action) end)
+        _pid = spawn(fn -> loop(action) end)
         
     end
 
@@ -21,9 +21,4 @@ defmodule TickServer do
         end
         
     end
-
-
-
-
-
 end

@@ -18,20 +18,21 @@ defmodule Consumer do
         pid
     end
 
-
-    #TODO when I get a new request, notify consumer state manager.
+    @doc """
+    When I get a new request, notify consumer state manager.
+    """
     def add_request(consumerPID, requestPID) do
         GenServer.call(consumerPID, {:add_request, requestPID})
     end
 
 
+    @doc """
+    give update to consumer_updater, get call from user
+    notifies request when done, pipe through data stream
+    """
     def give_update(consumerPID, update_message) do
         GenServer.cast(consumerPID, {:updating_request, update_message})
-        # give update to consumer_updater, get call from user
-        # notifies request when done, pipe through data stream
     end
-
-
 
     ##
     ## GenServer Implementation
@@ -41,6 +42,9 @@ defmodule Consumer do
         {:ok, initial_state}
     end
 
+    @doc """
+    gets a new request
+    """
     def handle_call({:add_request, requestPID}, _from, {status, user_state, 
                                                           request_queue}) do
 
@@ -50,8 +54,10 @@ defmodule Consumer do
         {:reply, :ok, {status, user_state, request_queue ++ [requestPID]}}
     end
 
-    # update request when waiting for a new request
-    # start a new request and do a unit of work on it
+    @doc """
+    update request when waiting for a new request
+    start a new request and do a unit of work on it
+    """
     def handle_cast({:updating_request, update_message}, 
                     {:waiting, user_state, request_queue = 
                                               [request | _rest_requests]}) do
@@ -70,6 +76,9 @@ defmodule Consumer do
         parse_response(response, final_user_state, request_queue) 
     end
 
+    @doc """
+    finish a request
+    """
     def handle_cast({:updating_request, update_message}, 
                     {:working, user_state, request_queue = 
                                                 [request | _rest_requests]}) do
@@ -84,13 +93,13 @@ defmodule Consumer do
 
     end
 
+    @doc """
+    handling a cast with no messages in the request queue
+    """
     def handle_cast({:updating_request, _update_message}, 
                     {status, user_state, []}) do
         {:noreply, {status, user_state, []}}                    
     end
-
-
-    # function to delegate parsing user response messages to
 
     # case for finishing message in queue
     defp parse_response(:complete,  user_state, [_ | request_tail]) do 
@@ -99,10 +108,10 @@ defmodule Consumer do
         {:noreply, {:waiting, user_state, request_tail}}
     end
 
+    # function to delegate parsing user response messages
     defp parse_response(:continue, user_state, request_queue) do
         ConsumerManager.update_consumer(self(), {user_state, 
                                 Request.get_all_states(request_queue)})
         {:noreply, {:working, user_state, request_queue}}
     end
-
 end

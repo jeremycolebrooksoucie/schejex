@@ -1,13 +1,10 @@
-defmodule Skeleton do
+defmodule Template do
     
     @doc """
     skeleton designed for users to design and implement applications that 
     reqiure concurrent scheduling.
     """
 
-    @doc """
-    assigns a consumer to a request_state (presumably initial state)
-    """
     def assign_consumer(consumers, _request_state) do
         {min_pid, _size} = Map.to_list(consumers) 
             |> Enum.min_by( fn({_pid, {_curr_pos, request_states}}) ->

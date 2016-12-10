@@ -5,7 +5,7 @@ defmodule TaxiUser do
     assigns a taxi to a passenger (a consumer to a request_state)
     """
 	def assign_consumer(consumers, {{start_row, start_col}, 
-                                    {end_row, end_col} , 
+                                    {_end_row, _end_col} , 
                                     {ref, requester}}) do
         let = String.first(Atom.to_string(requester)) |> String.downcase()
         
@@ -24,7 +24,7 @@ defmodule TaxiUser do
             
             # creates a zip where each element is paired with the next element
             # and sums the distance between those elements
-            [h | rest] = points
+            [_h | rest] = points
             List.zip([points, rest])
                 |> Enum.map(fn({{r1, c1}, {r2, c2}}) -> 
                         :math.sqrt(:math.pow(r1 - r2, 2) + 
@@ -40,9 +40,6 @@ defmodule TaxiUser do
         min_pid
     end
 
-
-
-    
     ####################### interpret_request_update *******************
     # these functions use pattern matching to determine the state of the
     # taxi in relationship to the passenger
@@ -58,7 +55,7 @@ defmodule TaxiUser do
     """
     def interpret_request_update(
     		_update, {taxi_row, taxi_col, :occupied, carID},
-    	    {start_pos, {taxi_row, taxi_col}, {ref, requester}}) do
+    	    {_start_pos, {taxi_row, taxi_col}, {_ref, _requester}}) do
 
         #let = String.first(Atom.to_string(requester)) |> String.()
 
@@ -73,12 +70,9 @@ defmodule TaxiUser do
     """
     def interpret_request_update(
     		_update, {taxi_row, taxi_col, :empty, carID}, 
-    	    {{taxi_row, taxi_col}, {_end_row, _end_col}, {ref, requester}}) do
-        
+    	    {{taxi_row, taxi_col}, {_end_row, _end_col}, {ref, requester}}) do        
         Print.remove_entry(ref)
-
         let = String.first(Atom.to_string(requester)) |> String.upcase()
-        #Print.get_update(ref, taxi_row, taxi_col, let)
         Print.get_update(carID, taxi_row, taxi_col, let)
         {:continue, {taxi_row, taxi_col, :occupied, carID}}
         
@@ -104,11 +98,9 @@ defmodule TaxiUser do
     """
     def interpret_request_update(
     		_update, {taxi_row, taxi_col, :occupied, carID}, 
-    	    {{_start_row, _start_col}, {end_row, end_col}, {ref, requester}}) do
+    	    {{_start_row, _start_col}, {end_row, end_col}, {_ref, requester}}) do
         
         let = String.first(Atom.to_string(requester)) |> String.upcase()
-        #Print.get_update(ref, taxi_row, taxi_col, let)
-
         Print.get_update(carID, taxi_row, taxi_col, let)
         {new_row, new_col} = get_next_position(taxi_row, taxi_col, 
         									   end_row, end_col)
@@ -164,7 +156,6 @@ defmodule TaxiUser do
         Request.start({{17, 2}, {8, 2}, {make_ref, :sharon}})
         Request.start({{15, 2}, {10, 6}, {make_ref, :riya}})
         Request.start({{6, 0}, {12, 1}, {make_ref, :ben}})
-
         Print.start()
     
     end
@@ -179,7 +170,7 @@ defmodule TaxiUser do
 
 
     def rand_tuple() do
-        {round(:random.uniform * 30), round(:random.uniform * 30)} 
+        {round(:rand.uniform * 30), round(:rand.uniform * 30)} 
     end
 
     def start_random_request(name) do

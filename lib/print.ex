@@ -7,7 +7,6 @@ defmodule Print do
     ## External facing RPC methods                                     ##
     #####################################################################
 
-
     @doc """
     starts printing a grid to represent taxis. Initializes to an empty 
     dictionary representing no taxis.
@@ -30,6 +29,9 @@ defmodule Print do
                                        row, col, disp})
     end
 
+    @doc """
+    removes an entry from the positions
+    """
     def remove_entry(entryRef) do 
         GenServer.cast(@printer_name, {:remove, entryRef})
     end
@@ -45,10 +47,10 @@ defmodule Print do
     @doc """
     prints taxis on a grid (assumes everything contained in 25x25 space)
     """
-    defp print_rows(positions) do
+    def print_rows(positions) do
         # reverses positions to key by value
         positions = Map.to_list(positions) 
-            |> Enum.reduce(%{}, fn({k, {r, c, disp}}, acc) -> 
+            |> Enum.reduce(%{}, fn({_k, {r, c, disp}}, acc) -> 
                                     Map.put(acc, {r, c}, disp) end)
 
             
@@ -64,7 +66,7 @@ defmodule Print do
     @doc """
     Builds string representing a row
     """
-    defp get_row(row, positions) do
+    def get_row(row, positions) do
         Enum.map(0..@num_cols, &(get_space(row, &1, positions))) 
             |> Enum.join("")
     end
@@ -72,7 +74,7 @@ defmodule Print do
     @doc """
     gets an individual space 
     """
-    defp get_space(row, col, positions) do
+    def get_space(row, col, positions) do
         Map.get(positions, {row, col}," ")        
     end
 
@@ -89,24 +91,31 @@ defmodule Print do
     """
     def handle_cast({:get_update, consumerPID, row, col, disp}, positions) do
         positions = Map.update(positions, consumerPID, {row, col, disp},
-                                    fn _ -> {row, col, disp} end)
+                                           fn _ -> {row, col, disp} end)
         {:noreply, positions}  
     end
 
-
+    @doc """
+    removes a position from the grid
+    """
     def handle_cast({:remove, ref}, positions) do
         positions = Map.delete(positions, ref)
         {:noreply, positions}  
     end
 
+    @doc """
+    prints positions
+    """
     def handle_cast(:print, positions) do
         print_rows(positions)
         {:noreply, positions}  
     end
 
-     def init(initial_state) do
+    @doc """
+    initializes grid
+    """
+    def init(initial_state) do
         # register self
         {:ok, initial_state}
     end
-
 end

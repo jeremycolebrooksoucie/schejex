@@ -10,7 +10,8 @@ defmodule ConsumerManager do
     Called to start consumer manager and register it
     """
     def start() do
-        {:ok, _pid} = GenServer.start(__MODULE__, %{}, name: @consumer_server_name)
+        {:ok, _pid} = GenServer.start(__MODULE__, %{}, 
+                                      name: @consumer_server_name)
         :ok
     end
 
@@ -38,12 +39,17 @@ defmodule ConsumerManager do
         {:ok, state_dict}
     end
 
-
+    @doc """
+    returns all consumers from the consumers module
+    """
     def handle_call({:get_all_consumers}, _from, state) do
         {:reply, state, state}  
     end
 
 
+    @doc """
+    updates consumer
+    """
     def handle_cast({:update_consumer, consumer_pid, consumer_state}, state) do
         new_state = Map.put(state, consumer_pid, consumer_state)
         {:noreply, new_state}
